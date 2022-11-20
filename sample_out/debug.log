@@ -1,0 +1,31 @@
+pstxnet.dat
+pstxnet.dat being processed
+printing dumper(@temp)
+$VAR1 = '\'AAOPJY6YGAAZ7VEJ\'';
+$VAR2 = 'U9.12,J21.6,J21.9,J21.10,J23.6,J23.9,J23.10,J25.6,J25.9,J25.10,J27.6,J27.9,J27.10,J11.6,J11.9,J11.10,J14.6,J14.9,J14.10,J15.6,J15.9,J15.10,J18.6,J18.9,J18.10,J16.MTB1,J16.MTB2,J19.MTB1,J19.MTB2,J13.MTB1,J13.MTB2,J24.MTB1,J24.MTB2,J22.MTB1,J22.MTB2,J20.MTB1,J20.MTB2,J26.MTB1,J26.MTB2,J12.MTB1,J12.MTB2,J17.MTB2,J17.MTB4,J17.MTB1,J17.MTB3,J10.17,J10.25,J10.51,J10.54,J10.59,J10.66,J10.68,J10.71,J10.79,J10.82,J10.108,J10.114,J8.17,J8.25,J8.51,J8.54,J8.59,J8.66,J8.68,J8.71,J8.79,J8.82,J8.108,J8.114,J6.MTB2,J6.MTB3,J6.MTB1,J6.MTB4,J5.MTB2,J5.MTB3,J5.MTB1,J5.MTB4,U10.12,J4.MTB2,J4.MTB4,J4.MTB1,J4.MTB3,J3.5,J3.7,J3.9,J3.8,U6.3,U6.8,U6.13,U6.18,SHRT2.3,';
+###############################################################################first file copied to array#######################################
+printing dumper(@temp)
+$VAR1 = '\'AAOPJY6YGAAZ7VEJ\'';
+$VAR2 = 'U9.12,J21.6,J23.6,J25.6,J27.6,J11.6,J14.6,J15.6,J18.6,J16.MTB1,J16.MTB2,J19.MTB1,J19.MTB2,J13.MTB1,J13.MTB2,J24.MTB1,J24.MTB2,J22.MTB1,J22.MTB2,J20.MTB1,J20.MTB2,J26.MTB1,J26.MTB2,J12.MTB1,J12.MTB2,J17.MTB2,J17.MTB4,J17.MTB1,J17.MTB3,J6.MTB2,J6.MTB3,J6.MTB1,J6.MTB4,J5.MTB2,J5.MTB3,J5.MTB1,J5.MTB4,U10.12,J4.MTB2,J4.MTB4,J4.MTB1,J4.MTB3,J3.5,J3.7,J3.9,J3.8,U6.3,U6.8,U6.13,U6.18,';
+
+ Getting into extract page netname 
+
+ exiting from extract page netname 
+###############################################################################second file copied to array #######################################
+starting simple string comparison from %NetArray2 to %NetArray1 to filter out;result is stored in %Netlist1_missing 
+starting simple string comparison from %NetArray1 to %NetArray2 to filter out;result is stored in %Netlist2_missing 
+##############check net naming/renaming without electrical changes#########################
+###########################################################
+############## find new nets added and nets deleted
+new nets:-
+###########################################################
+deleted nets:-
+###########################################################
+##########checking moved/floating pins###################
+######### moved pins
+J21.9,J23.9,J25.9,J27.9,J11.9,J14.9,J15.9,J18.9,J10.17,J10.25,J10.51,J10.54,J10.59,J10.66,J10.68,J10.71,J10.79,J10.82,J10.108,J10.114 : 'AAOPJY6YGAAZ7VEJ' -> 'OWCTISUADETYEYPR'
+J21.10,J23.10,J25.10,J27.10,J11.10,J14.10,J15.10,J18.10 : 'AAOPJY6YGAAZ7VEJ' -> 'FGI5ULTWJZRWNDOS'
+J8.17,J8.25,J8.51,J8.54,J8.59,J8.66,J8.68,J8.71,J8.79,J8.82,J8.108,J8.114,SHRT2.3 : 'AAOPJY6YGAAZ7VEJ' -> 'A1BAEOOWJ4LHDTM9'
+######### deleted pins
+##########checking new pins added ###################
+######### new pins

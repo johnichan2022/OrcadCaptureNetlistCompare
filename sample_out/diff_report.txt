@@ -1,0 +1,15 @@
+###rename_net###
+###rename_net_end###
+###new_nets###
+###new_nets_end###
+###deleted_nets###
+###deleted_nets_end###
+###moved_pins###
+J21.9,J23.9,J25.9,J27.9,J11.9,J14.9,J15.9,J18.9,J10.17,J10.25,J10.51,J10.54,J10.59,J10.66,J10.68,J10.71,J10.79,J10.82,J10.108,J10.114	'AAOPJY6YGAAZ7VEJ'	'OWCTISUADETYEYPR'
+J21.10,J23.10,J25.10,J27.10,J11.10,J14.10,J15.10,J18.10	'AAOPJY6YGAAZ7VEJ'	'FGI5ULTWJZRWNDOS'
+J8.17,J8.25,J8.51,J8.54,J8.59,J8.66,J8.68,J8.71,J8.79,J8.82,J8.108,J8.114,SHRT2.3	'AAOPJY6YGAAZ7VEJ'	'A1BAEOOWJ4LHDTM9'
+###moved_pins_end###
+###deleted_pins###
+###deleted_pins_end###
+###new_pins###
+###new_pins_end###
