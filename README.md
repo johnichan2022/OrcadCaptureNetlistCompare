@@ -1,4 +1,4 @@
-# OrcadCaptureNetlistCompare
+# Orcad Capture Netlist Compare
 Simple comparison between pstxnet files created by capture for identifying the modifications.
 
 
