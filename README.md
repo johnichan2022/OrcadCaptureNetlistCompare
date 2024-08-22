@@ -1,10 +1,10 @@
-# Orcad Capture Netlist Compare
+# Cadence Orcad Capture Netlist Compare
 Simple comparison between pstxnet files created by capture for identifying the modifications.
 
 
 Run netlist_diff_vanced_capture.bat on a perl installed Windows PC.Strawberry Perl (64-bit) 5.32.1.1-64bit is tested.
-The input files pstxnet.dat & pstxnet2.dat are called in bat file. The result is displayed in diff_report. The netlist1_out & netlist2_out are created in *.tel file format for debugging
-debug.log can be used for debug.
+The input files pstxnet.dat & pstxnet2.dat are called in bat file. The result is displayed in diff_report. The netlist1_out & netlist2_out are created in *.tel file format for debugging;
+debug.log can also be used for debug.
 
 -------the following bugs are known and fixed so far---
 
