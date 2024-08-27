@@ -16,21 +16,23 @@
 
 ## made compatible to capture 21-oct-2022 -done
 ## sort need to be added for pin in any order of renamed nets to be identified. looks like a orcad capture issue - fixed on 2022
+## refdes with underscore like MH_1 is supported,regex is more generic for capturing refdes and check added if sort_pins_in_net  misses a refdes - 26-aug-2024
 
 ######################################################################
 use File::Basename;
 use strict;
 use warnings;
+use Term::ANSIColor;
 use Data::Dumper;
 #use DateTime;
 #my $dt2 = DateTime->now(time_zone=>'local');
  
 if ($#ARGV != 1 ) 
 	 {
-	 print "usage: sort_netlist_extract.pl old-netlist new-netlist";
+	 print "usage: netlist_vanced_capture.pl old-netlist new-netlist";
 	exit;
 	 }
-print "\n******     0v7 07-Apr-2020.....\n";
+print "\n******     0v9 26-Aug-2024.....\n";
 print "\n******    Reading Netlist .....\n";
 
 my $inputfile1 = shift(@ARGV);						#get text based IN filename
@@ -82,7 +84,7 @@ chomp @input_lines2;
 #foreach(@input_lines){print log_file $_."\n";}
 my($netlist2_2d_ref)=extract_netlist_file(\@input_lines2);
 my %NetArray2 = %{$netlist2_2d_ref};
-my($page_netname)=extract_page_netname(\@input_lines2);### page number extracttion
+#my($page_netname)=extract_page_netname(\@input_lines2);### page number extracttion
 undef @input_lines2;
 #print $NetArray1_ref;
 #print scalar keys %NetArray2;
@@ -104,28 +106,26 @@ print  "starting simple string comparison from %NetArray2 to %NetArray1 \n";
 my($Netlist1_missing_ref,$netlist_line_match2)=simple_compare(\%NetArray2,\%NetArray1);
 my %Netlist1_missing= %{$Netlist1_missing_ref};
 
-#print log_file "#################Array##########################################\n";
-#just test a display
-# for($i=0;$i<(scalar keys %Netlist1_missing);$i++)#just a display
-	# {
-	# print log_file "${$Netlist1_missing{$i}}[0] \t ${$Netlist1_missing{$i}}[1] \n";
-	# }
+print log_file "#################Array##########################################\n";#just test a display
+for(my $i=0;$i<(scalar keys %Netlist1_missing);$i++)#just a display
+	{
+	print log_file "${$Netlist1_missing{$i}}[0] \t ${$Netlist1_missing{$i}}[1] \n";
+	}
 
-# print log_file "###########################################################\n";
+print log_file "###########################################################\n";
 	
 ##########################
 print log_file "starting simple string comparison from %NetArray1 to %NetArray2 to filter out;result is stored in %Netlist2_missing \n";
 print "starting simple string comparison from %NetArray1 to %NetArray2  \n";
 my($Netlist2_missing_ref,$netlist_line_match1)=simple_compare(\%NetArray1,\%NetArray2);
 my %Netlist2_missing= %{$Netlist2_missing_ref};
-#print log_file "#################array##########################################\n";
-#just test a display
-# for($i=0;$i<(scalar keys %Netlist2_missing);$i++)#just a display
-	# {
-	# print log_file "${$Netlist2_missing{$i}}[0] \t ${$Netlist2_missing{$i}}[1] \n";
-	# }
+print log_file "#################array##########################################\n";#just test a display
+for(my $i=0;$i<(scalar keys %Netlist2_missing);$i++)#just a display
+	{
+	print log_file "${$Netlist2_missing{$i}}[0] \t ${$Netlist2_missing{$i}}[1] \n";
+	}
 
-# print log_file "###########################################################\n";
+print log_file "###########################################################\n";
 
 undef %NetArray1,%NetArray2;	
 
@@ -153,9 +153,6 @@ for(my $i=0;$i<(scalar keys %Netlist1_missing);$i++)
 print diff_rpt_file "###rename_net_end###\n";
 print log_file "###########################################################\n";	
 print "###########################################################\n";	
-	
-
-
 	
 
 print log_file "############## find new nets added and nets deleted\n";
@@ -583,7 +580,8 @@ my @temp;
 my $k=0;
 my $pattern1='NET_NAME';
 #$pattern2='NODE_NAME\s+([\S]+)\s+([\S]+)';
-my $pattern2='NODE_NAME\s+([A-Z]+?[0-9]*?[A-Z]*?[0-9]*?)\s+([A-Z]*?[0-9]+?)$';
+#my $pattern2='NODE_NAME\s+([A-Z]+?[0-9]*?[A-Z]*?[0-9]*?)\s+([A-Z]*?[0-9]*?)$';
+my $pattern2 = 'NODE_NAME\s+([A-Z0-9\_]+)\s+([A-Z0-9]*)$';
 #/([A-Z]+?[0-9]*?[A-Z]*?[0-9]*?[\.][A-Z]*?[0-9]+?),/gi
 my $combine_flag=0;
 my %_netArray;
@@ -599,25 +597,26 @@ for(my $i=0;$i<(scalar @netlist);$i++)
 
 					$temp1=$netlist[($i+1)];
 					#print log_file $temp;
-					#print log_file 'first occurance'.$temp."\n";
+					print log_file 'first time ever in the loop'.$temp1."\n";
 					$combine_flag=1;
 					}
 			elsif((m/$pattern1/) && $combine_flag eq 1)#moving to new net name..  complete the net & pins for the curretn net now
 					{
 					
 					### sort the $temp2 & put back in temp2
-					$temp2=sort_pins_in_net($temp2);
-					@temp=($temp1,$temp2.','); 
-					$_netArray{$k}=[@temp];
+					print log_file 'pins collected so far unsorted ' . $temp2 . "\n";
+					$temp2 = sort_pins_in_net($temp2);
+					@temp = ($temp1, $temp2 . ','); 
+					#@temp = ($temp1, $temp2); this caused , issues if commented in the last item in hte array
+					$_netArray{$k} = [@temp];
 					$k++;
-					$temp2='';
-					#print log_file '$temp[0]->'.$temp[0]."\n";
-					undef @temp;#clear 1D array
-					$temp[0]='';
-					$temp1=$netlist[($i+1)];
-					#print log_file '$temp1->'.$temp1."\n";
-					$combine_flag=1;
-					
+					$temp2 = '';
+					print log_file 'closing pins of the net and moving to next $temp[0]->' . $temp[0] . ' ' . $temp[1] . "\n";
+					undef @temp; # clear 1D array
+					$temp[0] = '';
+					$temp1 = $netlist[($i + 1)];
+					print log_file '$temp1->' . $temp1 . "\n";
+					$combine_flag = 1;
 					}
 			elsif(m/$pattern2/)
 					{
@@ -625,24 +624,25 @@ for(my $i=0;$i<(scalar @netlist);$i++)
 					$temp2=$temp2.$1.'.'.$2.',';
 					#$temp3='NODE_NAME'.'     '.$1.' '.$2;
 					$temp3='NODE_NAME'."\t".$1.' '.$2;#tab was used in capture while concpet hdl uses 5 spaces
-					#print log_file $temp2."\n";
+					print log_file $temp2."\n";
 					if($temp3 ne $_) ## re assembling pins to make sure that regex is not missing anything
 					{
-					print "Runtime Error:optimize regex for pins extraction!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+					my $error_message = "Runtime Error: optimize regex for pins extraction!";
+					print color("red"), "$error_message\n", color("reset");## didnt work
 					print log_file "Runtime Error:optimize regex for pins extraction!!!!!!!!!!!!!!!!!!!!!!!!!\n";
 					print log_file $_."\n";
 					print log_file 'NODE_NAME'."\t".$1.' '.$2."\n";
 					}
 					else
 						{
-						#print log_file '$temp3->'.$temp3."\n";
-						#print log_file '$temp2->'.$temp2."\n";
+						print log_file 'else $temp3->'.$temp3."\n";
+						print log_file 'else $temp2->'.$temp2."\n";
 						}
 
 					}
 		
-		#print log_file $temp3;
-		#print log_file "\n";
+	#	print log_file $temp3;
+	#	print log_file "---end---\n";
 		}
 
 
@@ -801,7 +801,8 @@ sub pins_in_net
 my $temp=$_[0];
 
 
-my @pins_array=($temp=~/([A-Z]+?[0-9]*?[A-Z]*?[0-9]*?[\.][A-Z]*?[0-9]+?),/gi);
+#my @pins_array=($temp=~/([A-Z]+?[0-9]*?[A-Z]*?[0-9]*?[\.][A-Z]*?[0-9]+?),/gi);
+my @pins_array = ($temp =~ /([A-Z0-9\_]+\.[A-Z0-9]+),?/gi);
 
 my $temp1=join(',', @pins_array);
 
@@ -809,11 +810,13 @@ my $temp1=join(',', @pins_array);
 #check regex by comparing input & outputs
 
 
+#if ($temp ne $temp1) this cause later issues in ',' for last items in array
 if ($temp ne $temp1.',')
 {
-print "Runtime Error:optimize regex for pins isolation!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+my $error_message = "Runtime Error: optimize regex for pins extraction!";
+print "\e[31m$error_message\e[0m\n";  # \e[31m sets the color to red, \e[0m resets it
 print log_file "Runtime Error:optimize regex for pins isolation!!!!!!!!!!!!!!!!!!!!!!!!!\n";
-print log_file $temp1.',';
+print log_file $temp1;
 print log_file "\n";
 print log_file "$temp\n";
 }
@@ -822,24 +825,32 @@ return \@pins_array;
 }
 
 #######################################
+sub sort_pins_in_net {
+    my $temp = $_[0];
 
-sub sort_pins_in_net
-{
-my $temp=$_[0];
+    #my @pins_array = ($temp =~ /([A-Z]+?[0-9]*?[A-Z]*?[0-9]*?[\.][A-Z]*?[0-9]+?),/gi);
+    my @pins_array = ($temp =~ /([A-Z0-9\_]+\.[A-Z0-9]+),/gi);
+    my @sorted_pins_array = sort @pins_array;
 
+    my $temp1 = join(',', @pins_array);
+    my $temp2 = join(',', @sorted_pins_array);
 
-my @pins_array=($temp=~/([A-Z]+?[0-9]*?[A-Z]*?[0-9]*?[\.][A-Z]*?[0-9]+?),/gi);
+    # Check the number of comma-separated variables
+    my $count_temp = scalar(split(',', $temp));
+    my $count_temp2 = scalar(split(',', $temp2));
 
-my @sorted_pins_array= sort @pins_array;
+    if ($count_temp != $count_temp2) {
+        print "Mismatch in the number of comma-separated variables!\n";
+        print log_file "Mismatch in the number of comma-separated variables!\n";
+        print "Original: $count_temp, Sorted: $count_temp2\n";
+        print "Original: $temp, Sorted: $temp2\n";
+        print log_file "Original: $count_temp, Sorted: $count_temp2\n";
+		print log_file "Original: $temp, Sorted: $temp2\n";
+    }
 
-my $temp1=join(',', @pins_array);
-my $temp2=join(',', @sorted_pins_array);
+    # Debugging prints (optional)
+    # print log_file 'sort_pins_in_net temp1 ' . $temp1 . "\n";
+    # print log_file 'sort_pins_in_net temp2 ' . $temp2 . "\n";
 
-#print log_file 'sort_pins_in_net temp1 '.$temp1."\n";
-#print log_file 'sort_pins_in_net temp2 '.$temp2."\n";
-
-#check regex by comparing input & outputs
-
-
-return $temp2;
+    return $temp2;
 }
